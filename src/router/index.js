@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Hello from '@/components/Hello'
+import Index from '@/components/Index'
+import Menu from '@/components/Menu'
 import Multilights from '@/components/Multilights'
 
 Vue.use(Router)
@@ -10,12 +12,15 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: Hello
+      component: Index
     },
     {
-      path: '/home',
-      component: Multilights
+      path: '/menu',
+      component: Menu,
+      children :[{
+      	path : '/home',
+      	component : resolve =>require(['@/components/Home.vue',resolve])
+      }]
     }
   ]
 })

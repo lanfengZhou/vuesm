@@ -114,6 +114,8 @@ export default {
     },
     touchup: function () {
       this.flag = false;
+      //ajax请求
+      console.log('1111');
     },
     touchleave: function () {
       this.flag = false;
@@ -144,6 +146,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  *{
+    margin: 0;
+    padding: 0;
+  }
   .m-light{
     position: absolute;
     left: 50%;
