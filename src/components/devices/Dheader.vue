@@ -1,0 +1,73 @@
+<template>
+	<div id="dheader" class="dheader">
+		<select class="form-control" v-model="selected">
+			<option disabled selected value="">请选择教室</option>
+			<option :value="item.id" v-for="(item,index) in roomlist">{{item.name}}</option>
+		</select>
+		<!-- <select class="form-control">>
+			<option value="1">请选择第几组灯</option>
+		</select> -->
+		<div class="switch">
+			<button type="button" class="btn btn-primary" @click="fun">全开{{msg}}</button>
+			<button type="button" class="btn btn-primary">全关</button>
+		</div>
+	</div>
+</template>
+
+<script >
+	import {mapGetters,mapActions} from 'vuex';
+	export default{
+		data(){
+			return {
+				selected:'',
+				roomlist:[]			}
+		},
+		created(){
+			var that=this;
+			$.post('/user/query',{page:1,rows:6},function(data){
+				data.users.forEach(function(item,index,arr){
+					that.roomlist.push(item);
+				})
+			})
+			//getroomlist
+			// $.post('/run/getRoomList',{building_id:sessionStorage.buildID},function(data){
+			//			data.rooms.forEach(function(item,index,arr){
+			//		that.roomlist.push(item);
+			//	})
+			// })
+		},
+		methods:{
+			...mapActions(['fun'])
+		},
+		cumputed:{
+			...mapGetters(['msg'])
+		},
+		watch:{
+			selected:function(){
+				console.log(this.selected);
+			}
+		}
+	}
+</script>
+<style scoped>
+	.dheader{
+		position: absolute;
+		top:10px;
+		left: 213px;
+		width: 100%;
+	}
+	.dheader select{
+		display: inline-block;
+		width: 300px;
+		margin-left: 10px;
+	}
+	.dheader .switch{
+		position: absolute;
+		top: 10px;
+		right: 300px;
+	}
+	.dheader .switch button{
+		width: 100px;
+		margin-left: 20px;
+	}
+</style>

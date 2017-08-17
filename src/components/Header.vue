@@ -13,7 +13,7 @@
 	      </div>
 	      <div id="navbar" class="navbar-collapse collapse">
 	        <ul class="nav navbar-nav navbar-left   navmenu">
-	          <li  v-for="(item,index) in listbar"><router-link :to="item.url"><span><img v-bind:src="item.imgurl"></span>{{item.content}}</router-link></li>
+	          <li  v-for="(item,index) in listbar"  @click='touchclick()'><router-link :to="item.url"><span><img v-bind:src="item.imgurl"></span>{{item.content}}</router-link></li>
 	        </ul>
 	      </div>
 	    </div>
@@ -27,7 +27,8 @@
 			return {
 				listbar:[
 				{content:'首页',imgurl:require('../assets/images/shouye32.png'),url:'/home'},
-				{content:'设备',imgurl:require('../assets/images/device32.png'),url:'/env'},
+				{content:'设备',imgurl:require('../assets/images/device32.png'),url:'/device'},
+				{content:'环境',imgurl:require('../assets/images/env.png'),url:'/env'},
 				{content:'安防',imgurl:require('../assets/images/protect.png'),url:'/protect'},
 				{content:'能源',imgurl:require('../assets/images/power32.png'),url:'/power'},
 				{content:'联动',imgurl:require('../assets/images/liandong.png'),url:'/contact'},
@@ -38,7 +39,9 @@
 		},
 		methods:{
 			touchclick(){
-				console.log("1111")
+				// console.log("1111");
+				this.$emit('touchclick');
+
 			}
 		}
 	}
@@ -69,9 +72,12 @@
 		letter-spacing:2px;
 		font-size: 15px;
 	}
-	.navmenu li:hover,.navmenu li.selected{
+	.navmenu li:hover{
 		background-color: #404040;
 	}
+/*	.navmenu li:active{
+		background-color: #7ce918
+	}*/
 	.navmenu img{
 		display: inline-block;
 		vertical-align: bottom;

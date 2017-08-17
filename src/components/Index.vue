@@ -5,12 +5,11 @@
 			<div >
 	    		<!-- <div class="logo-bg"></div> -->
 				<div class="nav">
-					<router-link to="/menu" class="gv" @click='touchclick'>
-						<span><img src="../assets/himages/hbuild.png"></span>实创教学楼
+				<div class="list" v-for = "(item,index) in buildinglist"  @click='touchclick($event)'>
+					<router-link to="/menu" class="gv" :id="item.id">
+						<span><img src="../assets/himages/hbuild.png"></span>{{item.name}}
 					</router-link>
-					<router-link to="/menu" class="gv">
-						<span><img src="../assets/himages/hbuild.png"></span>科学教学楼
-					</router-link>
+				</div>
 				</div>
 			</div>
   		</transition>
@@ -28,11 +27,21 @@ import Meteor   from '../../static/js/Meteor'
 export default {
 	data() {
 		return {
-			
+			buildinglist:[]
 		}
 	},
 	created() {
-		
+		var that=this;
+		// $.get('/run/getBuildingList',function(data){
+		// 	data.buildings.forEach(function(item,index,arr){
+		// 		this.buildinglist.push(item);
+		// 	})
+		// })
+		$.get('/user/getUserInfo',function(data){
+			data.result.forEach(function(item,index,arr){
+				that.buildinglist.push(item);
+			})
+		})
 	},
 	mounted() {
 		let canvas = document.getElementById('canvas'),
@@ -80,14 +89,11 @@ export default {
 		frame()
 	},
 	methods: {
-		touchclick(){
-			this.$router.push({
-	            name: 'routePage',
-	            query: {
-	                routeParams: "params"
-	            }
-		})	
-	}
+		touchclick(e){
+			// this.$emit('touchclick',e.target.innerText);
+			sessionStorage.buildName=e.target.innerText;
+			sessionStorage.buildID=e.target.getAttribute('id');
+		}	
   }
 }
 </script>
@@ -125,6 +131,9 @@ export default {
     left: 50%;
     transform: translate(-50%,0);
     display: inline-block;
+}
+.list{
+	display: inline-block;
 }
 .gv {
 	text-decoration: none;
