@@ -1,3 +1,3 @@
-export const getMsg = (state, payload) => {
-  state.msg = payload.msg;
+export const getRoom= (room, payload) => {
+  room.id = payload.id;
 }

@@ -1,6 +1,6 @@
-export const fun = ({commit}) => {
+export const fun = ({commit},id) => {
   commit({
-    type: 'getMsg',     //对应mutation.js中的getMsg方法
-    msg: '我是修改后的数据...'
+    type: 'getRoom',     //对应mutation.js中的getMsg方法
+    id: id
   });
 };

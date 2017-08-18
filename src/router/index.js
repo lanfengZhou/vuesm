@@ -26,7 +26,7 @@ export default new Router({
       	component : resolve => require(['@/components/Device.vue'],resolve),
       	children :[{
       		path:'/ledctrl',
-      		component : resolve => require(['@/components/devices/Multilights.vue'],resolve) 
+      		component : resolve => require(['@/components/devices/Lights.vue'],resolve) 
       	},
       	{
       		path:'/curctrl',

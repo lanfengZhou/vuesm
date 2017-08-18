@@ -8,19 +8,20 @@
 			<option value="1">请选择第几组灯</option>
 		</select> -->
 		<div class="switch">
-			<button type="button" class="btn btn-primary" @click="fun">全开{{msg}}</button>
+			<button type="button" class="btn btn-primary" @click="fun">全开</button>
 			<button type="button" class="btn btn-primary">全关</button>
 		</div>
 	</div>
 </template>
 
 <script >
-	import {mapGetters,mapActions} from 'vuex';
+	import {mapGetters,mapActions} from 'vuex'
 	export default{
 		data(){
 			return {
 				selected:'',
-				roomlist:[]			}
+				roomlist:[]
+			}
 		},
 		created(){
 			var that=this;
@@ -36,15 +37,17 @@
 			//	})
 			// })
 		},
-		methods:{
-			...mapActions(['fun'])
-		},
-		cumputed:{
-			...mapGetters(['msg'])
+		methods:mapActions(['fun']),
+		computed:{
+			...mapGetters({
+				room_id:'id'
+			})
 		},
 		watch:{
 			selected:function(){
-				console.log(this.selected);
+				// console.log(this.selected);
+				let id=this.selected;
+				this.$store.dispatch('fun',id);
 			}
 		}
 	}

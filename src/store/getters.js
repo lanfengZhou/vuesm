@@ -1,3 +1,1 @@
-export const msg = state => {
-	return state.msg
-};
+export  const id = state =>state.id
