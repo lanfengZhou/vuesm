@@ -29,7 +29,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         '/user':{
-            target:'http://localhost:3000',
+            target:'http://localhost:3001',
             pathRewrite:{
                 '^/user':'/user'
             }

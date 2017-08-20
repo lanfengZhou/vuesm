@@ -1,24 +1,28 @@
 <template>
 	<div id="light" class="light">
 		<p>dengguang{{room_id}}</p>
-		<div class="switch switch-mini">
-			<input type="checkbox" id="myswitch" checked   />
+		<img src="../../assets/images/light_off.png">
+		<div class="switch switch-mini "> 
+			<input type="checkbox" id="myswitch" checked/>
 		</div>
 	</div>
 </template>
 
 <script >
 	import {mapGetters} from 'vuex'
-	import '../../../static/switch/css/bootstrap-switch.css'
-	import '../../../static/switch/js/bootstrap-switch.js'
+	import 'bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css'
+	import 'bootstrap-switch/dist/js/bootstrap-switch.min.js'
 	export default{
 		data(){
 			return {
 				lightsNum:''
 			}
 		},
+		created(){
+
+		},
 		mounted(){
-			// $("#myswitch").bootstrapSwitch('toggleState');
+			$("#myswitch").bootstrapSwitch('toggleState');
 		},
 		computed:{
 			...mapGetters({
