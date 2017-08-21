@@ -1,5 +1,14 @@
-const room = {
-  msg: 'qwqw',
-  id:''
+//init state
+const state = {
+  id:'223'
 }
-export default room
+//getters
+const getters={
+	id:state => state.id
+}
+export default {
+  state,
+  getters,
+  // actions,
+  // mutations
+}

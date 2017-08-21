@@ -30,7 +30,7 @@
 				console.log("11111");
 			},
 			sidebarClick(){
-
+				this.$store.dispatch('setCtrlType',"sssss");
 			}
 
 

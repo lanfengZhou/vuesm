@@ -1,13 +1,12 @@
-const fun = ({commit},id) => {
+const fun = ({commit},room) => {
   commit({
-    type: 'getRoom',     //对应mutation.js中的getRoom方法
+    type: 'getRoom',    
     id: id
   });
 };
-const setCtrlType=({commit},type)=>{
-	commit({
-		type:'setType',
-		type:type
+const setCtrlType=({commit},ctrltype)=>{
+	commit('setType',{
+		type:ctrltype
 	})
 }
 export {

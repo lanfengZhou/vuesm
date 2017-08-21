@@ -1,6 +1,6 @@
-const id = state =>state.id
-const type = state =>state.type
-export {
-	id,
-	type
+export const msg = state =>{
+	return {
+		id:state.room.id,
+		type:state.ctrltype.type
+	}
 }

@@ -11,6 +11,7 @@
 			<button type="button" class="btn btn-primary" @click="fun">全开</button>
 			<button type="button" class="btn btn-primary">全关</button>
 		</div>
+		<div>{{room_id}}</div>
 	</div>
 </template>
 
@@ -32,7 +33,9 @@
 				})
 			})
 		},
-		methods:mapActions(['fun']),
+		methods:{
+			...mapActions(['fun'])
+		},
 		computed:{
 			...mapGetters({
 				room_id:'id'
