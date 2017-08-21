@@ -7,7 +7,7 @@
 				<div class="nav">
 				<div class="list" v-for = "(item,index) in buildinglist"  @click='touchclick($event)'>
 					<router-link to="/menu" class="gv" :id="item.id">
-						<span><img src="../assets/himages/hbuild.png"></span>{{item.name}}
+						<span><img src="../assets/himages/hbuild.png"></span>{{item.building_name}}
 					</router-link>
 				</div>
 				</div>
@@ -32,16 +32,16 @@ export default {
 	},
 	created() {
 		var that=this;
-		// $.get('/run/getBuildingList',function(data){
-		// 	data.buildings.forEach(function(item,index,arr){
-		// 		this.buildinglist.push(item);
-		// 	})
-		// })
-		$.get('/user/getUserInfo',function(data){
-			data.result.forEach(function(item,index,arr){
+		$.get('config/building/query',function(data){
+			data.buildings.forEach(function(item,index,arr){
 				that.buildinglist.push(item);
 			})
 		})
+		// $.get('/user/getUserInfo',function(data){
+		// 	data.result.forEach(function(item,index,arr){
+		// 		that.buildinglist.push(item);
+		// 	})
+		// })
 	},
 	mounted() {
 		let canvas = document.getElementById('canvas'),
@@ -147,6 +147,9 @@ export default {
     margin: 0px 30px;
     font: 18px/43px 'microsoft yahei';
     color: #066197;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 a.gv:hover { 
 	background: url('../assets/himages/nav_gv.png') repeat 0px -43px; 

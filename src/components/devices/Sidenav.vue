@@ -1,12 +1,14 @@
 <template>
 	<div id="sidenav" class="sidenav">
 		<ul v-for="(item,index) in sidelist">
-			<li><router-link :to="item.url">{{item.content}}</router-link></li>
-		</ul>	
+			<li @click="sidebarClick"><router-link :to="item.url">{{item.content}}</router-link></li>
+			<p>{{ctrltype}}</p>	
+		</ul>
 	</div>
 </template>
 
 <script >
+	import {mapGetters,mapActions} from 'vuex'
 	export default{
 		data(){
 			return {
@@ -18,10 +20,19 @@
 				]
 			}
 		},
+		computed:{
+			...mapGetters({
+				ctrltype:'type'
+			})
+		},
 		methods:{
 			roomid(){
 				console.log("11111");
+			},
+			sidebarClick(){
+
 			}
+
 
 		}
 	}

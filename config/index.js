@@ -28,10 +28,16 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-        '/user':{
-            target:'http://localhost:3001',
+        '/run':{
+            target:'http://localhost:8080',
             pathRewrite:{
-                '^/user':'/user'
+                '^/run':'/run'
+            }
+        },
+        '/config':{
+            target:'http://localhost:8080',
+            pathRewrite:{
+                '^/config':'/config'
             }
         }
     },

@@ -28,6 +28,10 @@ export default new Router({
       		path:'/ledctrl',
       		component : resolve => require(['@/components/devices/Lights.vue'],resolve) 
       	},
+        {
+          path:'/mledctrl',
+          component : resolve => require(['@/components/devices/Multilights.vue'],resolve) 
+        },
       	{
       		path:'/curctrl',
       		component : resolve => require(['@/components/devices/Curtain.vue'],resolve) 

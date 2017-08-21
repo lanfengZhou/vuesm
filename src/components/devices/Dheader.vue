@@ -2,7 +2,7 @@
 	<div id="dheader" class="dheader">
 		<select class="form-control" v-model="selected">
 			<option disabled selected value="">请选择教室</option>
-			<option :value="item.id" v-for="(item,index) in roomlist">{{item.name}}</option>
+			<option :value="item.id" v-for="(item,index) in roomlist">{{item.room_name}}</option>
 		</select>
 		<!-- <select class="form-control">>
 			<option value="1">请选择第几组灯</option>
@@ -25,17 +25,12 @@
 		},
 		created(){
 			var that=this;
-			$.post('/user/query',{page:1,rows:6},function(data){
-				data.users.forEach(function(item,index,arr){
+			//getroomlist
+			$.post('/config/room/query',{building_id:sessionStorage.buildID},function(data){
+					data.rooms.forEach(function(item,index,arr){
 					that.roomlist.push(item);
 				})
 			})
-			//getroomlist
-			// $.post('/run/getRoomList',{building_id:sessionStorage.buildID},function(data){
-			//			data.rooms.forEach(function(item,index,arr){
-			//		that.roomlist.push(item);
-			//	})
-			// })
 		},
 		methods:mapActions(['fun']),
 		computed:{
