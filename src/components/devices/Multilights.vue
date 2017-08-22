@@ -115,7 +115,9 @@ export default {
     touchup: function () {
       this.flag = false;
       //ajax请求
-      console.log('1111');
+      $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'hue',state:this.h},function(data){
+      })
+      console.log(this.mulLightsdid);
     },
     touchleave: function () {
       this.flag = false;
@@ -139,8 +141,31 @@ export default {
   watch: {
     h: function () {
       // ajax请求
+      console.log(this.flag);
+      if(!this.flag){
+        //   $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'hue',state:this.h},function(data){
+        // })
+      }
+    },
+    s:function(){
+      if(!this.flag){
+        $.post('/run/light',{data:1},function(){
+
+        })
+        //   $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'saturation',state:this.s},function(data){
+
+        // })
+      }
+    },
+    l:function(){
+      if(!this.flag){
+        //   $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'saturation',state:this.l},function(data){
+
+        // })
+      }
     }
-  }
+  },
+  props:['mulLightsdid']
 }
 </script>
 
@@ -151,12 +176,13 @@ export default {
     padding: 0;
   }
   .m-light{
-    /*background-color: #f00;*/
-    position: absolute;
-    left: 213px;
-    bottom: 60px;
+    position: relative;
+    left: 50%;
+    margin-left: -180px;
+    top: 30px;
     /*transform: translate(-50%,-50%);*/
     height: 280px;
+    /*opacity: 0.8*/
   }
   .m-light #canvas{
     position: relative;
@@ -180,6 +206,7 @@ export default {
     background:-webkit-linear-gradient(top,#fff,#000);
    /*background:-o-linear-gradient(top,#fff,#000);*/
     filter: progid:DXImageTransform.Microsoft.gradient(startcolorstr=white,endcolorstr=black,gradientType=0); 
+    cursor: pointer;
   }
   .m-light .light .process{
     position: relative;
@@ -189,7 +216,7 @@ export default {
     height: 0;
     border: 8px solid #000;
     background-color: #fff;
-    border-color: transparent black transparent transparent ;
+    border-color: black transparent black black ;
   }
   .m-light .content{
     position: absolute;

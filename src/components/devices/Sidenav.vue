@@ -1,8 +1,7 @@
 <template>
 	<div id="sidenav" class="sidenav">
 		<ul v-for="(item,index) in sidelist">
-			<li @click="sidebarClick"><router-link :to="item.url">{{item.content}}</router-link></li>
-			<p>{{ctrltype}}</p>	
+			<li @click="sidebarClick($event)"><router-link :to="item.url">{{item.content}}</router-link></li>
 		</ul>
 	</div>
 </template>
@@ -29,8 +28,16 @@
 			roomid(){
 				console.log("11111");
 			},
-			sidebarClick(){
-				this.$store.dispatch('setCtrlType',"sssss");
+			sidebarClick(e){
+				var ele=e.target;
+				var url=ele.getAttribute('href');
+				var type=url.substr(2,url.length);
+				if(type==='ledctrl'){
+					this.$store.dispatch('setCtrlType',"/run/light/lightControl");
+				}else if(type==='curctrl'){
+					this.$store.dispatch('setCtrlType',"/run/curtain/curtainControl");
+				}
+				
 			}
 
 
@@ -53,6 +60,9 @@
 		line-height: 30px;
 	}
 	.sidenav ul li:hover{
+		background: rgba(240,240,240,0.3);
+	}
+	.sidenav ul li.selected{
 		background: rgba(240,240,240,0.3);
 	}
 	.sidenav ul li a{

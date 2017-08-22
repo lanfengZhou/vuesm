@@ -3,7 +3,6 @@ import Router from 'vue-router'
 import Hello from '@/components/Hello'
 import Index from '@/components/Index'
 import Menu from '@/components/Menu'
-import Multilights from '@/components/Multilights'
 
 Vue.use(Router)
 

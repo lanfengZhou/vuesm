@@ -29,13 +29,13 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         '/run':{
-            target:'http://localhost:8080',
+            target:'http://192.168.31.17:8080',
             pathRewrite:{
                 '^/run':'/run'
             }
         },
         '/config':{
-            target:'http://localhost:8080',
+            target:'http://192.168.31.17:8080',
             pathRewrite:{
                 '^/config':'/config'
             }

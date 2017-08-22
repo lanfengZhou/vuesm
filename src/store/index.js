@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import * as actions from './actions';
-import * as mutations from './mutations';
+// import * as mutations from './mutations';
 import * as getters from './getters';
 import room from './modules/room';
 import ctrltype from './modules/ctrltype';
@@ -15,6 +15,6 @@ const store = new Vuex.Store({
   	room,
   	ctrltype,
   },
-  mutations
+  // mutations
 })
 export default store;

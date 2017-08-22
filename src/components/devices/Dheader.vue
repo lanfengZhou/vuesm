@@ -7,11 +7,14 @@
 		<!-- <select class="form-control">>
 			<option value="1">请选择第几组灯</option>
 		</select> -->
-		<div class="switch">
-			<button type="button" class="btn btn-primary" @click="fun">全开</button>
-			<button type="button" class="btn btn-primary">全关</button>
+		<div class="switch" v-if="ctrltype==='/run/light/lightControl'">
+			<button type="button" class="btn btn-primary" @click="turnAll('on')">全开</button>
+			<button type="button" class="btn btn-primary" @click="turnAll('off')">全关</button>
 		</div>
-		<div>{{room_id}}</div>
+		<div class="switch" v-if="ctrltype==='/run/curtain/curtainControl'">
+			<button type="button" class="btn btn-primary" @click="turnAll('open')">全开</button>
+			<button type="button" class="btn btn-primary" @click="turnAll('close')">全关</button>
+		</div>
 	</div>
 </template>
 
@@ -21,7 +24,8 @@
 		data(){
 			return {
 				selected:'',
-				roomlist:[]
+				roomlist:[],
+				switchState:''
 			}
 		},
 		created(){
@@ -34,11 +38,16 @@
 			})
 		},
 		methods:{
-			...mapActions(['fun'])
+			...mapActions(['fun']),
+			turnAll(arc){
+				this.switchState=arc+parseInt(Math.random()*100);
+				console.log(this.switchState);
+			}
 		},
 		computed:{
 			...mapGetters({
-				room_id:'id'
+				room_id:'id',
+				ctrltype:'type'
 			})
 		},
 		watch:{
@@ -46,6 +55,9 @@
 				// console.log(this.selected);
 				let id=this.selected;
 				this.$store.dispatch('fun',id);
+			},
+			switchState:function(){
+				this.$store.dispatch('setSwitchStatus',this.switchState);
 			}
 		}
 	}

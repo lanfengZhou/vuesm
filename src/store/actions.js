@@ -1,7 +1,7 @@
-const fun = ({commit},room) => {
+const fun = ({commit},room_id) => {
   commit({
     type: 'getRoom',    
-    id: id
+    id: room_id
   });
 };
 const setCtrlType=({commit},ctrltype)=>{
@@ -9,7 +9,13 @@ const setCtrlType=({commit},ctrltype)=>{
 		type:ctrltype
 	})
 }
+const setSwitchStatus=({commit},switchstatus)=>{
+	commit('setStatus',{
+		status:switchstatus
+	})
+}
 export {
 	fun,
-	setCtrlType
+	setCtrlType,
+	setSwitchStatus
 }
