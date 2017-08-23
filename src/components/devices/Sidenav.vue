@@ -36,6 +36,8 @@
 					this.$store.dispatch('setCtrlType',"/run/light/lightControl");
 				}else if(type==='curctrl'){
 					this.$store.dispatch('setCtrlType',"/run/curtain/curtainControl");
+				}else{
+					this.$store.dispatch('setCtrlType',"null");
 				}
 				
 			}

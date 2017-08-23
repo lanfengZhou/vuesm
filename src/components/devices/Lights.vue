@@ -4,7 +4,7 @@
 		<ul >
 			<li v-for="(item,index) in lightslist">
 				<p>{{item.name}}</p>
-				<img :src="item.url" v-if="item.type==='hue'" :id="item.did" @click="hueClick($event)">
+				<img :src="item.url" v-if="item.type==='hue'" :id="item.did" :name="item.name" title="点击控制彩灯" @click="hueClick($event)">
 				<img v-else :src="item.url">
 				<div class="switch switch-mini" v-if="item.status=='on'"> 
 					<input type="checkbox" :id="item.did" :value="item.status" :name="item.type" :checked="true" title="开关" @click="lightClick($event)"/>
@@ -15,7 +15,7 @@
 			</li>
 			<!-- <p>{{switchStatus}}</p> -->
 		</ul>
-		<v-multilights v-if="mlightFlag" :mulLightsdid="mulLightsdid"></v-multilights>
+		<v-multilights v-if="mlightFlag" :mulLightsdid="mulLightsdid" :mulLightsname="mulLightsname" v-on:hide="hide"></v-multilights>
 	</div>
 </template>
 
@@ -31,7 +31,8 @@
 				onurl:require('../../assets/images/light_on.png'),
 				offurl:require('../../assets/images/light_off.png'),
 				mlightFlag:false,
-				mulLightsdid:''
+				mulLightsdid:'',
+				mulLightsname:''
 			}
 		},
 		components: {
@@ -67,14 +68,16 @@
 				})
 			},
 			hueClick(e){
-				if(this.mlightFlag){
-					this.mlightFlag=false
-				}else{
+				// if(this.mlightFlag){
+				// 	this.mlightFlag=false
+				// }else{
 					this.mlightFlag=true;
 					var ele=e.target;
 					this.mulLightsdid=e.target.getAttribute('id');
+					this.mulLightsname=ele.getAttribute('name');
+					// console.log(this.mulLightsname);
 
-				}
+				// }
 			},
 			init(){
 				var that=this;
@@ -88,6 +91,9 @@
 					});
 					that.lightslist=data.lights;
 				})
+			},
+			hide(){
+				this.mlightFlag=false;
 			}
 		},
 		watch:{

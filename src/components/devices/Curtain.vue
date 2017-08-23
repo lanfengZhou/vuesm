@@ -104,13 +104,14 @@
 		height: 100%
 	}
 	.light ul{
-		text-align: center;
+		text-align: left;
 		/*list-style: none;*/
 	}
 	.light ul li{
 		display: inline-block;
 		width: 100px;
 		margin-left: 60px;
+		text-align: center;
 	}
 	.light .switch{
 		

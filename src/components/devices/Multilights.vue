@@ -1,5 +1,6 @@
 <template>
   <div class="m-light">
+    <p class="lname" @click="hide">{{mulLightsname}}</p>
     <canvas id="colorcanvas" width="360px" height="200px" v-on:click="touchclick" v-on:mousemove="touchmove" 
     v-on:mousedown="touchdown" v-on:mouseup="touchup" v-on:mouseleave="touchleave"></canvas>
     <div class="light">
@@ -10,16 +11,16 @@
     <div class="content">
       <div class="rColor" id="rColor"></div>
       <div class="hsl">
-        <p><strong id="h">{{h}}</strong></p> 
-        <p><strong id="s">{{s}}</strong></p>
-        <p><strong id="l">{{l}}</strong></p>
+        <p><strong id="h">H（色相）:{{h}}</strong></p> 
+        <p><strong id="s">S（饱和度%）:{{s}}</strong></p>
+        <p><strong id="l">L（亮度%）:{{l}}</strong></p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import hcolor from  '../../assets/images/hcolor1.png'
+// import hcolor from  '../../assets/images/hcolor1.png'
 
 //十六进制颜色值域RGB格式颜色值之间的相互转换  
   
@@ -58,7 +59,7 @@ import hcolor from  '../../assets/images/hcolor1.png'
             return that;      
         }  
     };
-function $ (id) {
+function $1 (id) {
   return document.getElementById(id)
 }
 export default {
@@ -71,19 +72,22 @@ export default {
       s: '',
       l: '',
       lightprocess: '',
-      flag: ''
+      flag: false,
+      mlight_name:''
     }
+  },
+  created(){
   },
   mounted () {
     this.canvas = init()
-    this.h = 'H（色相）:0'
-    this.l = 'L（亮度%）:0'
-    this.s = 'S（饱和度%）:0'
-    this.fillcolor = $('rColor')
-    this.lightprocess = $('process')
+    this.h = '0'
+    this.l = '0'
+    this.s = '0'
+    this.fillcolor = $1('rColor')
+    this.lightprocess = $1('process')
     function init () {
       var img = new Image()
-      img.src = hcolor
+      img.src = require('../../assets/images/hcolor1.png')
       var hcanvas = document.getElementById('colorcanvas')
       var ctx = hcanvas.getContext('2d')
       img.onload = function () {
@@ -115,8 +119,9 @@ export default {
     touchup: function () {
       this.flag = false;
       //ajax请求
-      $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'hue',state:this.h},function(data){
-      })
+      // $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'hue',state:this.h},function(data){
+      //   })
+      console.log(this.flag);
       console.log(this.mulLightsdid);
     },
     touchleave: function () {
@@ -129,43 +134,42 @@ export default {
           blue = imgData.data[2],
           sRgb = 'rgb(' + red + ',' + green + ',' + blue + ')',
           sHexColor = sRgb.colorHex()
-      this.h = 'H（色相）:' + e.offsetX
-      this.s = 'S（饱和度%）:' + parseInt((1 - (e.offsetY / 200).toFixed(2)) * 100)
+      this.h = e.offsetX
+      this.s =parseInt((1 - (e.offsetY / 200).toFixed(2)) * 100)
       this.fillcolor.style.backgroundColor = sHexColor
     },
     lightcommon: function (e) {
       this.lightprocess.style.top = -(200 - e.offsetY) + 'px'
-      this.l = 'L（亮度%）:' + parseInt(((1 - e.offsetY / 200).toFixed(2)) * 100)
+      this.l =parseInt(((1 - e.offsetY / 200).toFixed(2)) * 100)
+    },
+    hide(){
+      this.$emit('hide');
     }
   },
   watch: {
     h: function () {
       // ajax请求
-      console.log(this.flag);
       if(!this.flag){
-        //   $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'hue',state:this.h},function(data){
-        // })
-      }
-    },
-    s:function(){
-      if(!this.flag){
-        $.post('/run/light',{data:1},function(){
-
+          $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'hue',state:this.h},function(data){
         })
-        //   $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'saturation',state:this.s},function(data){
-
-        // })
       }
     },
+    // s:function(){
+    //   if(!this.flag){
+    //       $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'saturation',state:this.s},function(data){
+
+    //     })
+    //   }
+    // },
     l:function(){
       if(!this.flag){
-        //   $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'saturation',state:this.l},function(data){
+          $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'lightness',state:this.l},function(data){
 
-        // })
+        })
       }
     }
   },
-  props:['mulLightsdid']
+  props:['mulLightsdid','mulLightsname']
 }
 </script>
 
@@ -177,12 +181,21 @@ export default {
   }
   .m-light{
     position: relative;
-    left: 50%;
-    margin-left: -180px;
+    /*left: 50%;*/
+    left: 13px;
     top: 30px;
     /*transform: translate(-50%,-50%);*/
     height: 280px;
     /*opacity: 0.8*/
+  }
+  .m-light .lname{
+    width: 360px;
+    font-size: 20px;
+    font-family: "微软雅黑";
+    color: #f4ea2a;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 10px;
   }
   .m-light #canvas{
     position: relative;
@@ -220,8 +233,8 @@ export default {
   }
   .m-light .content{
     position: absolute;
-    top: 210px;
-    left: 50px;
+    top: 100px;
+    left: 450px;
   }
   .m-light .content .rColor{
     display: inline-block;
