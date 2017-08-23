@@ -119,8 +119,6 @@ export default {
     touchup: function () {
       this.flag = false;
       //ajax请求
-      // $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'hue',state:this.h},function(data){
-      //   })
       console.log(this.flag);
       console.log(this.mulLightsdid);
     },
