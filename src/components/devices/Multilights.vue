@@ -145,24 +145,11 @@ export default {
     }
   },
   watch: {
-    h: function () {
-      // ajax请求
+    flag:function(){
       if(!this.flag){
-          $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'hue',state:this.h},function(data){
-        })
-      }
-    },
-    // s:function(){
-    //   if(!this.flag){
-    //       $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'saturation',state:this.s},function(data){
-
-    //     })
-    //   }
-    // },
-    l:function(){
-      if(!this.flag){
-          $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'lightness',state:this.l},function(data){
-
+         $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'hue',state:this.h},function(data){
+        });
+         $.post('/run/light/lightControl',{did:this.mulLightsdid,key:'lightness',state:this.l},function(data){
         })
       }
     }

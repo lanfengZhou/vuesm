@@ -112,7 +112,7 @@
 		}
 	}
 </script>
-<style scope>
+<style scoped>
 	.light{
 		position: relative;
 		left: 213px;

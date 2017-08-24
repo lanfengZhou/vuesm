@@ -7,14 +7,6 @@
 		<!-- <select class="form-control">>
 			<option value="1">请选择第几组灯</option>
 		</select> -->
-		<div class="switch" v-if="ctrltype==='/run/light/lightControl'">
-			<button type="button" class="btn btn-primary" @click="turnAll('on')">全开</button>
-			<button type="button" class="btn btn-primary" @click="turnAll('off')">全关</button>
-		</div>
-		<div class="switch" v-if="ctrltype==='/run/curtain/curtainControl'">
-			<button type="button" class="btn btn-primary" @click="turnAll('open')">全开</button>
-			<button type="button" class="btn btn-primary" @click="turnAll('close')">全关</button>
-		</div>
 	</div>
 </template>
 
@@ -24,8 +16,7 @@
 		data(){
 			return {
 				selected:'',
-				roomlist:[],
-				switchState:''
+				roomlist:[]
 			}
 		},
 		created(){
@@ -37,17 +28,15 @@
 				})
 			})
 		},
+		mounted(){
+			this.selected=this.room_id;
+		},
 		methods:{
-			...mapActions(['fun']),
-			turnAll(arc){
-				this.switchState=arc+parseInt(Math.random()*100);
-				console.log(this.switchState);
-			}
+			
 		},
 		computed:{
 			...mapGetters({
-				room_id:'id',
-				ctrltype:'type'
+				room_id:'id'
 			})
 		},
 		watch:{
@@ -55,9 +44,6 @@
 				// console.log(this.selected);
 				let id=this.selected;
 				this.$store.dispatch('fun',id);
-			},
-			switchState:function(){
-				this.$store.dispatch('setSwitchStatus',this.switchState);
 			}
 		}
 	}
@@ -67,7 +53,6 @@
 		position: absolute;
 		top:10px;
 		left: 213px;
-		width: 100%;
 	}
 	.dheader select{
 		display: inline-block;

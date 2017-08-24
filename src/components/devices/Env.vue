@@ -218,7 +218,7 @@
 		}
 	}
 </script>
-<style scope>
+<style scoped>
 	.env{
 		position: relative;
 		left: 213px;
@@ -248,7 +248,7 @@
 		/*left: 0;*/
 		/*top:100px;*/
 		text-align: left;
-		margin-top: 100px;
+		margin-top: 0;
 	}
 	.env .airmodel .airname{
 		/*width: */
