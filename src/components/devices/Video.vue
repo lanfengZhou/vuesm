@@ -22,52 +22,20 @@
 				</div>
 			</li>
 		</ul>
-		<div class="airmodel" v-if="airflag">
-			<p class="airname" title="点击隐藏" @click="hide">{{airname}}</p>
-			<ul class="temp">
-				<li v-for="(item,index) in templist"><button type="button" class="btn btn-primary" @click="turnTemp($event)">{{item}}</button></li>
-			</ul>
-			<div class="tempctrl">
-				<img :src="up" @click="turnLoop($event,'up')">
-				<p>温度</p>
-				<img :src="down" @click="turnLoop($event,'down')">
-			</div>
-			<div class="model">
-			<!-- 	<div class="switch">
-					<img :src="switchon" title="开" @click="turnLoop($event,'open')">
-					<img :src="switchoff" title="关" @click="turnLoop($event,'close')">
-				</div> -->
-				<div class="show_now">
-					<p><span>温度: </span>{{temp_now}}</p>
-					<p><span>模式: </span>{{model_now}}</p>
-					<p><span>风向: </span>{{dir_now}}</p>
-					<p><span>风速: </span>{{speed_now}}</p>
-				</div>
-				<ul>
-					<li v-for="(item,index) in modellist"><button type="button" class="btn btn-primary" @click="turnLoop($event,item.arc)">{{item.content}}</button></li>
-				</ul>				
-			</div>
-		</div>
+		<v-tv></v-tv>
 	</div>
 </template>
 
 <script >
 	import {mapGetters} from 'vuex'
+	import Tvcontrol from '../devices/Tvcontrol'
 	export default{
 		data(){
 			return {
-				templist:[16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
-				modellist:[
-					{content:'模式',arc:'model'},
-					{content:'风向',arc:'windDir'},
-					{content:'风速',arc:'windSpeed'},
-				],
 				tvlist:'',
 				topboxlist:'',
 				onurl:require('../../assets/images/video/video_on.png'),
 				offurl:require('../../assets/images/video/video_off.png'),
-				up:require('../../assets/images/airconditioner/up.png'),
-				down:require('../../assets/images/airconditioner/down.png'),
 				pbon:require('../../assets/images/video/topbox_on.png'),
 				pboff:require('../../assets/images/video/topbox_off.png'),
 				airflag:false,
@@ -84,6 +52,9 @@
 		},
 		mounted(){
 			this.init();
+		},
+		components:{
+			"v-tv":Tvcontrol
 		},
 		computed:{
 			...mapGetters({

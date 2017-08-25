@@ -10,3 +10,4 @@
 [0823/191859:WARNING:in_range_cast.h(38)] value 216174981153816576 out of range
 [0823/191859:WARNING:in_range_cast.h(38)] value 3963227046603142144 out of range
 [0823/191859:WARNING:in_range_cast.h(38)] value 7710279112052467712 out of range
+[0824/141603:ERROR:file_io.cc(41)] write: 管道正在被关闭。 (0xE8)

@@ -5,7 +5,7 @@
 			<ul>
 				<li v-for="(item,index) in envlist">
 					<p>{{item.name}}</p>
-					<img :src="item.url" :id="item.did" :name="item.name" :value="item.unit"@click="queryHis($event)">
+					<img :src="item.url" :id="item.did" :name="item.name" :value="item.unit"@click="queryHis($event)" title="点击查询历史数据">
 					<p>{{item.value}}/{{item.unit}}</p>
 				</li>
 			</ul>
@@ -30,9 +30,9 @@
 				show:false,
 				mychart:'',
 				option:{
-	                backgroundColor:'#cdcdcd',
+	                backgroundColor:'rgba(255, 255, 255, 1)',
 	                title: {
-	                    text: '',
+	                    text: '历史数据',
 	                },
 	                tooltip: {
 	                    trigger: 'axis'//触发类型
@@ -55,7 +55,10 @@
 	                            yAxisIndex: 'none'
 	                        },
 	                        restore: {},
-	                        saveAsImage: {}
+	                        saveAsImage: {},
+	                        magicType: {
+								type: ['line', 'bar']
+							}
 	                    }
 	                },
 	                dataZoom: [{//用于区域缩放
@@ -88,7 +91,10 @@
 			}
 		},
 		mounted(){
-		    this.init();
+			if(!!this.room_id){
+				this.init();
+			}
+		    
 		},
 		components:{
 			"v-dheader":Dheader
@@ -119,9 +125,7 @@
 					that.envlist=data.numSensors;
 					console.log(that.envlist);
 				});
-		    // var option;
-		    this.mychart=echarts.init(document.getElementById('dataHisChart'));
-		    // this.mychart.setOption(option = );
+		    this.mychart=echarts.init(document.getElementById('dataHisChart'));;
             this.mychart.setOption(this.option, true);
 			},
 			queryHis(e){
@@ -142,7 +146,7 @@
 						xdata.push(item.insertTime);
 						ydata.push(item.data)
 					});
-					console.log(xdata);
+					// console.log(xdata);
 					options.xAxis.data=xdata;
 					options.dataZoom.startValue=data.hisdata[0].insertTime;
 					options.series[0].data=ydata;
@@ -153,7 +157,7 @@
 		},
 		watch:{
 			room_id:function(){
-				this.init();
+					this.init();
 			},
 			show:function(){
 				// if(this.show)
@@ -170,29 +174,30 @@
 	}
 	#dataHisChart{
 		position: relative;
-		top:128px;
+		top:60px;
 		left: 260px;
 		width: 800px;
 		/*margin:0 100px;*/
 		height: 400px;
+		border-radius: 10px;
 	}
 	.env .dhead{
 		margin-left: -213px;
 	}
 	.env .content{
 		position: relative;
-		top:100px;
+		top:60px;
 		left: 200px;
-		/*width: 100%;*/
+		width: 100%;
 		/*background-color: #f00;
 		margin:0 auto;*/
 	}
 	.env .content li{
 		display: inline-block;
-		margin-left: 100px;
 		text-align: center;
 		font-family: "宋体";
 		font-size: 16px;
+		margin-left: 100px;
 	}
 	.env .content li img{
 		cursor: pointer;
