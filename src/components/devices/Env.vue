@@ -206,6 +206,7 @@
 			room_id:function(){
 				this.init();
 			},
+			//根据空调did获取空调状态
 			did:function(){
 				var that=this;
 				$.post('/run/envControl/getAirState',{did:this.did},function(data){
