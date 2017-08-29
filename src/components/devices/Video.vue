@@ -12,6 +12,7 @@
 		</ul>
 		<v-tv v-if="tvflag" :tv_did="tv_did"></v-tv>
 		<v-topbox v-if="topboxflag" :topbox_did="topbox_did"></v-topbox>
+		<v-music></v-music>
 	</div>
 </template>
 
@@ -19,6 +20,7 @@
 	import {mapGetters} from 'vuex'
 	import Tvcontrol from '../devices/Tvcontrol'
 	import Topboxctrl from '../devices/Topboxctrl'
+	import Music from '../devices/Music'
 	export default{
 		data(){
 			return {
@@ -40,7 +42,8 @@
 		},
 		components:{
 			"v-tv":Tvcontrol,
-			"v-topbox":Topboxctrl
+			"v-topbox":Topboxctrl,
+			"v-music":Music
 		},
 		computed:{
 			...mapGetters({
