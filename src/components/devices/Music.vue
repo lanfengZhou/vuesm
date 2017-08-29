@@ -12,7 +12,7 @@
 			</div>
 			<div class="player_music_time">02:48/04:16</div>
 			<div class="player_progress">
-				<div class="player_progress_inner" @click="processLoad($event)" @mousemove="processMove($event)" @mousedown="processDown($event)" @mouseup="processUp($event)">
+				<div class="player_progress_inner" @click="processLoad($event)" >
 					<!-- <div class="player_progress_load" style="width:100%;" @click="processLoad($event)"></div> -->
 					<div class="player_progress_play" :style="{width: playwidth+'%'}">
 						<i class="player_progress_dot" @click="dotClick" @mousedown="dotDown($event)" @mouseup="dotUp" @mousemove="dotMove($event)"></i>
@@ -30,7 +30,10 @@
 				isActive:true,
 				playwidth: 0,
 				timer:'',
-				dotflag:false
+				dotflag:false,
+				dot_offset_left:'',
+				dot_x:'',
+				max:384
 			}
 		},
 		methods:{
@@ -67,9 +70,8 @@
 			dotDown(e){
 				this.dotflag=true;
 				var e=e||window.event;
-				var x=e.clientX;
-				var offset_left=e.target.offsetLeft;
-				console.log(x+','+offset_left);
+				this.dot_x=e.clientX;
+				this.dot_offset_left=e.target.offsetLeft;
 			},
 			dotUp(){
 				this.dotflag=false;
@@ -80,45 +82,36 @@
 					// this.playwidth=this.playwidth+parseInt(e.offsetLeft/400*100);
 				}
 			},
-			processDown(e){
-				this.dotflag=true;
-			},
-			processMove(e){
-				if(!!this.dotflag){
-					if(this.playwidth<=100){
-							this.playwidth=parseInt(e.offsetX/400*100);
-						}else{
-							this.playwidth=100;
-					}
-				}
-			},
-			processUp(e){
-				this.dotflag=false;
-			}
+			// processDown(e){
+			// 	this.dotflag=true;
+			// },
+			// processMove(e){
+			// 	// if(!!this.dotflag){
+			// 	// 	if(this.playwidth<=100){
+			// 	// 			this.playwidth=parseInt(e.offsetX/400*100);
+			// 	// 		}else{
+			// 	// 			this.playwidth=100;
+			// 	// 	}
+			// 	// }
+			// },
+			// processUp(e){
+			// 	this.dotflag=false;
+			// }
 		},
 		computed:{
 
 		},
 		mounted(){
 			var that=this;
-			 document.addEventListener('mouseup',function(){
-			 	that.dotflag=false;
-			 })
-			 document.addEventListener('mousedown',function(){
-			 	that.dotflag=true;
-			 })
+			document.addEventListener('mouseup',function(e){
+				that.dotflag=false;
+			});
 			 document.addEventListener('mousemove',function(e){
 				if(!!that.dotflag){
 				  	var thisX=(e||window.event).clientX;
-				  	console.log(thisX);
+				  	var to=Math.min(that.max,Math.max(-2,that.dot_offset_left+(thisX-that.dot_x)));
+				  	that.playwidth=to/that.max*100;
 				}
-			 // 	if(!!that.dotflag){
-				// 	if(that.playwidth<=100){
-				// 			that.playwidth=parseInt(e.offsetX/400*100);
-				// 		}else{
-				// 			that.playwidth=100;
-				// 	}
-				// }
 			 })
 		}
 	}

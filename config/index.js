@@ -29,13 +29,13 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         '/run':{
-            target:'http://192.168.31.14:8080',
+            target:'http://www.yihuozhou.online:8082',
             pathRewrite:{
                 '^/run':'/run'
             }
         },
         '/config':{
-            target:'http://192.168.31.14:8080',
+            target:'http://www.yihuozhou.online:8082',
             pathRewrite:{
                 '^/config':'/config'
             }
