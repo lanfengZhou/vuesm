@@ -87,6 +87,7 @@
 		height: 450px;
 		background-color: #2c2c2c;
 		border-radius: 30px;
+		z-index: 20
 	}
 	.tvctrl .top{
 		width: 100%;
