@@ -2,8 +2,11 @@
 	<div id="music" class="music">
 		<div class="songlist">
 			<ul>
-				<li v-for="(item,index) in songslist"><a href="javascript:;" :id="item.no" @click="play($event,item.no,item.name)">{{item.name}}</a></li>
+				<li v-for="(item,index) in songslist"><a href="javascript:;" :id="item.no" @click="play($event,item.no,item.name,item.singer)">{{item.name}}</a></li>
 			</ul>
+		</div>
+		<div class="playerorder">
+			<a href="javascript:;" v-bind:class="playorder" :title="ordername" @click=playOrder></a>
 		</div>
 		<div class="player">
 			<a href="javascript:;" class="btn_prev" title="上一首" @click="chagePrev"></a>
@@ -12,10 +15,9 @@
 		</div>
 		<div class="player_music">
 			<div class="player_music_info">
-				<a href="" class="songname">歌曲名：{{songname}}</a>
-				<!-- <a href="" class="singername">周杰伦</a> -->
+				<a href="javascript:;" class="songname">{{songname}}</a>
 			</div>
-			<div class="player_music_time">02:48/04:16</div>
+			<div class="player_music_time">{{currenttime}}/{{songtime}}</div>
 			<div class="player_progress">
 				<div class="player_progress_inner" @mousedown="processLoad($event)">
 					<!-- <div class="player_progress_load" style="width:100%;" @click="processLoad($event)"></div> -->
@@ -44,7 +46,7 @@
 	export default{
 		data(){
 			return {
-				isActive:true,
+				isActive:'',
 				playwidth: 0,
 				voicewidth:0,
 				timer:'',
@@ -52,7 +54,11 @@
 				voicemax:84,
 				songslist:'',
 				isVoice:true,
-				songname:''
+				songname:'',
+				songtime:'',
+				currenttime:'00:00',
+				playorder:'',
+				ordername:''
 			}
 		},
 		mounted(){
@@ -65,44 +71,51 @@
 				if(this.isActive){
 					//ajax
 					this.isActive=false;
-					$.post('/run/audio/playerControl',{arg:'play'},function(){})
-					// function process(){
-					// 	if(that.playwidth<=100){
-					// 		that.playwidth+=1;
-					// 	}else{
-					// 		that.playwidth=0;
-					// 	}
-					// 	that.timer=setTimeout(process,1000);
-					// }
-					// process();
+					$.post('/run/audio/playerControl',{arg:'pause'},function(){});
 				}else{
 					//ajax
-					// clearTimeout(this.timer);
 					this.isActive=true;
-					$.post('/run/audio/playerControl',{arg:'pause'},function(){})
+					$.post('/run/audio/playerControl',{arg:'play'},function(){})
 				}
 			},
+			//上一首
 			chagePrev(){
 				var that=this;
+				this.isActive=false;
 				$.post('/run/audio/playerControl',{arg:'last'},function(data){
-					that.songname=data.song.name;
+					that.songname=data.song.name+'/'+data.song.singer;
+					that.songtime=that.timeShift(data.song.duration);
+					that.currenttime=that.timeShift(data.song.process/100*data.song.duration);
+					that.playwidth=0;
+					that.isActive=true;
 				})
 			},
+			//下一首
 			chageNext(){
 				var that=this;
+				this.isActive=false;
 				$.post('/run/audio/playerControl',{arg:'next'},function(data){
-					that.songname=data.song.name;
+					that.songname=data.song.name+'/'+data.song.singer;
+					that.songtime=that.timeShift(data.song.duration);
+					that.currenttime=that.timeShift(data.song.process/100*data.song.duration);
+					that.playwidth=0;
+					that.isActive=true;
 				})
 			},
 			//点击进度条
 			processLoad(e){
 				e.cancelBubble = true;
 				this.playwidth=Math.round(e.offsetX/400*100);
+				var duration=that.unShift(that.songtime);
+				that.currenttime=that.timeShift(duration*that.playwidth/100);
+				$.post('/run/audio/playerControl',{arg:'process',process:that.playwidth},function(data){})
+				$.post('/run/audio/playerControl',{arg:'process',process:this.playwidth},function(data){});
 
 			},
 			voiceLoad(e){
 				e.cancelBubble = true;
 				this.voicewidth=Math.round(e.offsetX/100*100);
+				$.post('/run/audio/playerVoice',{voiceValue:this.voicewidth},function(data){})
 			},
 			dotDown(e){
 				var e=e||window.event;
@@ -113,6 +126,10 @@
 				document.onmouseup=function(e){
 					document.onmousemove=null;
 					document.onmouseup=null;
+					// clearInterval(that.timer);
+					var duration=that.unShift(that.songtime);
+					that.currenttime=that.timeShift(duration*that.playwidth/100);
+					$.post('/run/audio/playerControl',{arg:'process',process:that.playwidth},function(data){})
 				};
 				document.onmousemove=function(e){
 				  	var thisX=(e||window.event).clientX;
@@ -129,6 +146,7 @@
 				document.onmouseup=function(e){
 					document.onmousemove=null;
 					document.onmouseup=null;
+					$.post('/run/audio/playerVoice',{voiceValue:that.voicewidth},function(data){})
 				};
 				document.onmousemove=function(e){
 				  	var thisX=(e||window.event).clientX;
@@ -136,32 +154,67 @@
 				  	that.voicewidth=Math.round(to/that.voicemax*100);
 				 }
 			},
+			//初始化
 			init(){
 				var that=this;
+				clearInterval(this.timer);
 				$.post('/run/audio/getSongList',{building_id:sessionStorage.buildID,room_id:this.room_id},function(data){
 					that.songslist=data.songs;
+					that.playorder=data.order.toLocaleLowerCase();
+						// if(data.currentSong.state=='play'){
+						// 	that.isActive=false;
+						// 	that.isActive=true;
+						// }
+						that.isActive=data.currentSong.state=='play'?true:false;
+						that.songname=data.currentSong.name+'/'+data.currentSong.singer;
+						that.voicewidth=data.currentSong.volume;
+						that.playwidth=data.currentSong.process;
+						that.songtime=that.timeShift(data.currentSong.duration);
+						that.currenttime=that.timeShift(data.currentSong.process/100*data.currentSong.duration);
 				});
 			},
 			//音量开关
-			switchVoice(){
+			switchVoice() {
 				if(this.isVoice){
 					this.isVoice=false;
+					$.post('/run/audio/playerVoice',{voiceValue:0},function(data){})
 				}else{
 					this.isVoice=true;
+					$.post('/run/audio/playerVoice',{voiceValue:this.voicewidth},function(data){})
 				}
 			},
 			//选择歌曲播放
-			play(e,num,name){
-				// if(this.isActive){
+			play (e,num,name,singer) {
+					var that=this;
 					this.isActive=false;
+					this.isActive=true;
 					$.post('/run/audio/selectSong',{no:num},function(data){
+						that.songtime=that.timeShift(data.song.duration);
 					})
-					// $.post('/run/audio/playerControl',{arg:'play'},function(data){
-
-					// })
-				// }
-				this.songname=name;
+				this.songname=name+'/'+singer;
+				this.currenttime="00:00";
 				this.playwidth=0;
+			},
+			//歌曲播放顺序,单曲/顺序/随机
+			playOrder(){
+				if(this.playorder=='random'){
+					this.playorder='single';
+				}else if(this.playorder=='single'){
+					this.playorder='order';
+				}else if(this.playorder=='order'){
+					this.playorder='random';
+				}
+
+			},
+			//时间转换
+			timeShift(time){
+				var minute=parseInt(time/60);
+				var second=parseInt(time%60);
+				return (minute>=10?minute:'0'+minute)+':'+(second>=10?second:'0'+second);
+			},
+			unShift(time){
+				var duration=time.match(/(\d+):(\d+)/g);
+				return parseInt(RegExp.$1*60)+parseInt(RegExp.$2);
 			}
 		},
 		computed:{
@@ -172,8 +225,58 @@
 		watch:{
 			room_id:function(){
 				this.init();
+			},
+			playorder:function(){
+				if(this.playorder=='order'){
+					this.ordername="顺序播放"
+				}else if(this.playorder=='single'){
+					this.ordername="单曲循环"
+				}else{
+					this.ordername="随机播放"
+				}
+				$.post('/run/audio/playOrder',{order:this.playorder.toLocaleUpperCase()},function(){})
+			},
+			isActive:function(){
+				// console.log()
+				var that=this;
+				clearInterval(this.timer);
+				if(this.isActive){
+					//歌曲总时长
+					var duration=this.unShift(this.songtime);
+					function process(){
+						if(that.playwidth<100){
+							// var prewidth=parseFloat((100/duration).toFixed(1));;
+							var ctime=that.unShift(that.currenttime)+1;
+							if(ctime>=duration){
+								ctime=duration;
+							}
+							that.currenttime=that.timeShift(ctime);
+							that.playwidth=parseInt(ctime/duration*100);
+							// that.playwidth+=prewidth;
+							// that.currenttime=that.timeShift(that.playwidth/100*duration);
+						}else{
+						}
+					}
+					this.timer=setInterval(process,1000);
+				}else{
+					clearInterval(this.timer);
+					// clearTimeout(this.timer);
+				}
+			},
+			playwidth:function(){
+				var that=this;
+				if(this.playwidth>=100){
+					this.isActive=false;
+					setTimeout(function(){
+						that.init();
+						that.playwidth=0;
+						that.isActive=true;
+					},2000)
+					
+				}
+				
+				}
 			}
-		}
 	}
 </script>
 <style scoped>
@@ -198,6 +301,31 @@
 	.music .songlist li a{
 		text-decoration: none;
 		font-size: 16px;
+	}
+	.playerorder{
+		position: relative;
+		top:10px;
+	}
+	.playerorder .order{
+		position: absolute;
+		left: 50px;
+		width: 20px;
+		height: 16px;
+		background:url(../../assets/images/video/m_order.png) no-repeat center;
+	}
+	.playerorder .single{
+		position: absolute;
+		left: 50px;
+		width: 20px;
+		height: 16px;
+		background:url(../../assets/images/video/m_single.png) no-repeat center;
+	}
+	.playerorder .random{
+		position: absolute;
+		left: 50px;
+		width: 20px;
+		height: 16px;
+		background:url(../../assets/images/video/m_random.png) no-repeat center;
 	}
 	.player{
 		position: relative;
