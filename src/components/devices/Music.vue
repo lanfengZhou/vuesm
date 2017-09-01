@@ -105,11 +105,13 @@
 			//点击进度条
 			processLoad(e){
 				e.cancelBubble = true;
+				var that=this;
 				this.playwidth=Math.round(e.offsetX/400*100);
 				var duration=that.unShift(that.songtime);
+				// clearInterval(this.timer);
 				that.currenttime=that.timeShift(duration*that.playwidth/100);
 				$.post('/run/audio/playerControl',{arg:'process',process:that.playwidth},function(data){})
-				$.post('/run/audio/playerControl',{arg:'process',process:this.playwidth},function(data){});
+				// $.post('/run/audio/playerControl',{arg:'process',process:this.playwidth},function(data){});
 
 			},
 			voiceLoad(e){
@@ -266,17 +268,27 @@
 			playwidth:function(){
 				var that=this;
 				if(this.playwidth>=100){
+					clearInterval(that.timer);
 					this.isActive=false;
-					setTimeout(function(){
-						that.init();
-						that.playwidth=0;
-						that.isActive=true;
-					},2000)
+					function nextplay(){
+						$.post('/run/audio/playerControl',{arg:'play'},function(data){
+							if(data.song.process>10){
+								setTimeout(nextplay,2000);
+							}else{
+								that.isActive=true;
+								that.playwidth=data.song.process;
+								that.songtime=that.timeShift(data.song.duration);
+								that.currenttime=that.timeShift(data.song.process/100*data.song.duration);
+								that.songname=data.song.name+'/'+data.song.singer;
+							}
+							
+						})
+					}
+					setTimeout(nextplay,2000);
 					
 				}
-				
-				}
 			}
+		}
 	}
 </script>
 <style scoped>

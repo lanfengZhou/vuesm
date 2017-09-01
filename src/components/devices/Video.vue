@@ -12,7 +12,7 @@
 		</ul>
 		<v-tv v-if="tvflag" :tv_did="tv_did"></v-tv>
 		<v-topbox v-if="topboxflag" :topbox_did="topbox_did"></v-topbox>
-		<v-music></v-music>
+		<v-music v-if="room_id"></v-music>
 	</div>
 </template>
 
