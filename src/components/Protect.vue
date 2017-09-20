@@ -13,9 +13,16 @@
 					<div class="c_right" @click="sendOrder('right',item.did)"></div>
 					<div class="c_down" @click="sendOrder('down',item.did)"></div>
 				</div>
-				<img :id="item.did" @click="getImg($event,item.did)" style="width: 300px;height: 300px;background-color: #000" title="点击播放"></li>
+				<div class="videoframe">
+					<div class="zoom_in">
+						<img :id="item.did" @click="getImg($event,item.did)"  alt="点击播放"><span class="c_scale"  @click="zoom($event)"></span>
+					</div>
+				</div>
+				
+				</li>
 			</ul>
 		</div>
+		<!-- <div class="fullscreen"></div> -->
 		<div class="switch" >
 			<button type="button" class="btn btn-primary" @click="turnAll('true')"><span></span>布防</button>
 			<button type="button" class="btn btn-primary" @click="turnAll('false')">撤防</button>
@@ -36,7 +43,8 @@
 				sensorlist:'',
 				timer:'',
 				cameratimer:'',
-				cameralist:''
+				cameralist:'',
+				isSelect:true
 			}
 		},
 		created(){
@@ -94,9 +102,25 @@
 				var did=ele.getAttribute('id');
 				var that=this;
 				clearInterval(this.cameratimer);
+				var i=1;
 				this.cameratimer=setInterval(function(){
+					console.log(i++);
 					ele.setAttribute('src','/run/camera/getImage?did='+did+'&'+Math.random());
-				},200);
+				},300);
+				
+			},
+			zoom(e){
+				// if(this.isSelect){
+				// 	this.isSelect=false;
+				// }else{
+				// 	this.isSelect=true;
+				// }
+				var ele=e.target;
+				if(ele.parentNode.getAttribute('class')=='zoom_in'){
+					ele.parentNode.setAttribute('class','zoom_out');
+				}else{
+					ele.parentNode.setAttribute('class','zoom_in');
+				}
 				
 			},
 			sendOrder(order,did){
@@ -151,8 +175,7 @@
 		font-family: '微软雅黑';
 	}
 	.cameralist{
-		position: absolute;
-		top: 200px;
+		margin-top:200px;
 		width: 100%;
 		text-align: center;
 	}
@@ -176,7 +199,7 @@
 		height: 32px;
 		margin: 0 auto;
 	}
-	.center .c_up:hover,.center .c_down:hover,.center .c_left:hover,.center .c_right:hover{
+	.center .c_up:hover,.center .c_down:hover,.center .c_left:hover,.center .c_right:hover,.c_scale:hover{
 		opacity: 0.5;
 		color: #0f0;
 		cursor: pointer;
@@ -197,6 +220,49 @@
 		display: inline-block;
 		background:url("../assets/images/video/right.png") no-repeat center;
 		vertical-align: middle;
+	}
+	.videoframe{
+		display: inline-block;
+	}
+	.videoframe img{
+		display: inline-block;
+		width: 100%;
+		height: 100%;
+		background-color: #000;
+	}
+	.videoframe .c_scale{
+		position: absolute;
+		width: 20px;
+		height: 20px;
+		bottom: 0;
+		right:0;
+		background: url("../assets/images/protect_scale.png") no-repeat center;
+		/*vertical-align: bottom;*/
+		/*z-index: 20;*/
+		/*margin-right: 20px;*/
+	}
+	.zoom_in{
+		position: relative;
+		width: 300px;
+		height: 300px;
+		background-color: #000;
+	}
+	.zoom_out{
+		position: absolute;
+		top:-62px;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 2000
+	}
+	.fullscreen{
+		width: 100%;
+		height: 3000px;
+		margin-top:-62px;
+		position: absolute;
+		z-index: 20;
+		background-color: #e8e8e8;
+		opacity: 0.5;
 	}
 	.fade-enter-active {
   		transition: all .5s

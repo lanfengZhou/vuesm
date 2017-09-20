@@ -191,9 +191,10 @@
 		background: rgba(7,17,27,0.95);
 	}
 	.content{
+		position: fixed;
 		padding-top: 62px;
 		overflow: hidden;
-		z-index: 11
+		z-index: 2000
 	}
 	.canvas {
 	    position: fixed;
