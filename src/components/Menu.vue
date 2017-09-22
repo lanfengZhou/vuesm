@@ -201,10 +201,16 @@
 	    z-index: 1;
 	}
 	.fade-enter-active {
-  		transition: all .5s
+  		transition: all .5s;
+  		-moz-transition:all .5s;
+  		-webkit-transition:all .5s;
+  		-o-transition:all .5s;
 	}
 	.fade-enter, .fade-leave-active {
 	  	opacity: 0;
 	  	transform: rotate( -60deg ) translateX( 400px );
+	  	-moz-transform: rotate( -60deg ) translateX( 400px );
+	  	-webkit-transform: rotate( -60deg ) translateX( 400px );
+	  	-o-transform: rotate( -60deg ) translateX( 400px );
 	}
 </style>

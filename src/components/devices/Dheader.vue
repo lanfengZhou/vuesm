@@ -53,6 +53,7 @@
 		position: absolute;
 		top:10px;
 		left: 213px;
+		z-index: 20
 	}
 	.dheader select{
 		display: inline-block;

@@ -205,11 +205,4 @@
 	.env .content li img:hover{
 		opacity: 0.6
 	}
-	.fade-enter-active {
-  		transition: all .5s
-	}
-	.fade-enter, .fade-leave-active {
-	  	opacity: 0;
-	  	transform: rotate( -60deg ) translateX( 400px );
-	}
 </style>

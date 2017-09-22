@@ -72,7 +72,6 @@
 		},
 		methods:{
 			turnAll(arc){
-				console.log("1");
 				$.post('/run/protect/startProtect',{room_id:this.room_id,state:arc},function(data){
 					if(data.success){
 						alert(arc=='true'?'布防成功':'撤防成功')
