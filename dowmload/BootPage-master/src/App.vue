@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import bootPage from '../components/Bootpage'
+import bootPage from './components/BootPage.vue'
 
 export default {
     data () {
@@ -80,6 +80,7 @@ export default {
 </script>
 
 <style>
+@import url('./assets/css/bootstrap.min.css');
 
 .box {
     padding: 100px;

@@ -2,7 +2,7 @@
 	<div id="sence">
 		<v-dheader class="dhead"></v-dheader>
 		<div class="addsence"><a href="javascript:;" @click="add">新增情景模式</a></div>
-		<div :class="{overlay:addisActive}">
+		<div :class="{overlay:addisActive,overlays:!addisActive}">
 			<div class="addInfo-close" @click="close">x</div>
 		</div>
 		<div class="content">
@@ -92,7 +92,10 @@
 		background:rgba(7,17,27,0.95);
 		z-index: 50;
 	}
-	.overlay .addInfo-close{
+	.overlays{
+		display: none;
+	}
+	.addInfo-close{
 	    position: absolute;
 	    top:50%;
 	    left: 50%;
@@ -111,7 +114,7 @@
 	}
 	.addsence{
 		position: absolute;
-		top: 20px;
+		top: 10px;
 		right: 20px;
 		width: 150px;
 		height: 40px;
@@ -140,7 +143,7 @@
 	}
 	.list{
 		position: absolute;
-		top:80px;
+		top:60px;
 		width: 100%;
 		height: 80%;
 		overflow-y: auto;
