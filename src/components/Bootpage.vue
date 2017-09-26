@@ -1,5 +1,6 @@
 <!-- 表格分页组件 -->
 <template>
+<div class="bootpage">
     <nav class="boot-nav">
         <ul class="pagination boot-page">
             <li>
@@ -12,8 +13,8 @@
                     <span aria-hidden="true">‹</span>
                 </a>
             </li>
-            <li v-for="page in pages" :class="activeNum === $index ? 'active' : ''">
-                <a href="javascript:void(0)" v-text="page" @click="onPageClick($index)"></a>
+            <li v-for="(page,index) in pages" :class="activeNum === index ? 'active' : ''">
+                <a href="javascript:void(0)"  @click="onPageClick(index)">{{page}}</a>
             </li>
             <li>
                 <a href="javascript:void(0)" aria-label="Next" @click="onNextClick()">
@@ -27,12 +28,13 @@
             </li>
         </ul>
         <div class="page-total">
-            共 <span v-text="pageTotal"></span> 页
+            共 <span>{{pageTotal}}</span> 页
         </div>
     </nav>
-    <select class="form-control boot-select" v-model="lens">
-        <option v-for="arr in lens" :value="arr" v-text="arr" :selected="$index === 0 ? true : false"></option>
+    <select class="form-control boot-select" v-model="len">
+        <option v-for="(arr,index) in lens" :value="arr" :selected="index === 0 ? true : false">{{arr}}</option>
     </select>
+</div>
 </template>
 
 <script>
@@ -43,7 +45,7 @@ export default {
         pages: {
             type: Array,
             default: function () {
-                return [1]
+                return [1];
             }
         },
 
@@ -63,7 +65,7 @@ export default {
         lens: {
             type: Array,
             default: function () {
-                return [10, 50, 100]
+                return [5, 10, 20];
             }
         },
 
@@ -188,24 +190,29 @@ export default {
 
         // 获取页码
         getPages () {
-            this.pages = []
+            this.pages = [];
 
             if (!this.async) {
-                this.pageTotal = Math.ceil(this.data.length / this.len)
+            	 console.log(this.data);
+                this.pageTotal = Math.ceil(this.data.length / this.len);
             }
 
             // 比较总页码和显示页数
             if (this.pageTotal <= this.pageLen) {
                 for (let i = 1; i <= this.pageTotal; i++) {
-                    this.pages.push(i)
+                    this.pages.push(i);
                 }
             } else {
                 for (let i = 1; i <= this.pageLen; i++) {
-                    this.pages.push(i)
+                    this.pages.push(i);
                 }
             }
-        },
 
+        },
+        resData(newData){
+        	console.log(newData);
+        	this.$emit('resData',newData);
+        },
         // 页码变化获取数据
         getData () {
             if (!this.async) {
@@ -216,11 +223,10 @@ export default {
                 for (let i = pageNum * len; i < (pageNum * len + len); i++) {
                     this.data[i] !== undefined ? newData.push(this.data[i]) : ''
                 }
-                
-                this.$dispatch('data', newData)
+                this.resData(newData);
             } else {
-                this.param.active = this.pages[this.activeNum]
-                this.param.len = this.len
+                this.param.active = this.pages[this.activeNum];
+                this.param.len = this.len;
 
                 this.$http({
                     url: this.url, 
@@ -237,8 +243,7 @@ export default {
                     if (!response.data.data.length) {
                         this.activeNum = this.pageTotal - 1
                     }
-
-                    this.$dispatch('data', response.data.data)
+                    this.resData(response.data.data);
                 })
             }
         },
@@ -255,7 +260,7 @@ export default {
             this.activeNum === 0 ? this.getData() : this.activeNum = 0
         }
     },
-    ready () {
+    mounted(){
         if (!this.async) {
             this.getPages()
         } 
@@ -284,11 +289,14 @@ export default {
             this.getData()
         }
     },
-    events: {
-        'refresh::page' () {
-            this.refresh()
-        }
-    }
+    // mounted(){
+    // 	this.refresh;
+    // }
+    // events: {
+    //     'refresh::page' () {
+    //         this.refresh()
+    //     }
+    // }
 }
 </script>
 
