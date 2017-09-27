@@ -24,7 +24,7 @@
 		  <div class="form-group" v-for="(item,index) in contents">
 		    <label class=" col-sm-2 control-label">内容{{index+1}}</label>
 		    <div class="col-sm-2">
-		      <select type="text" class="form-control ctrlType" placeholder="请选择控制类型" @change="ctrlType($event)">
+		      <select type="text" class="form-control" placeholder="请选择控制类型" v-model='selected[index]' @change="ctrlType($event)">
 		      	<option value="null">请选择控制类型</option>
 		      	<option value="light">灯光</option>
 		      	<option value="curtain">窗帘</option>
@@ -34,17 +34,65 @@
 		      </select>
 		    </div>
 		   	<div class="col-sm-2">
-		      <select type="text" class="form-control ctrlType" placeholder="请选择控制设备">
+		      <select type="text" class="form-control " placeholder="请选择控制设备">
 		      	<option value="null">请选择控制设备</option>
 		      	<!-- <option v-for="(item,index1) in devlist" value="item.did">{{item.name}}</option> -->
 		      </select>
 		    </div>
-		    <div class="col-sm-3">
+		    <div class="col-sm-3" v-if="selected[index]=='light'||selected[index]=='curtain'||selected[index]=='plugbase'">
 		      <div class="radio">
-				  <label><input type="radio" :name="index"  value="option1" checked>打开</label>
-				  <label><input type="radio" :name="index" value="option2">关闭</label>
+				  <label><input type="radio" :name="index"  value="on" checked>打开</label>
+				  <label><input type="radio" :name="index" value="off">关闭</label>
 			  </div>
-		    </div>  
+		    </div>
+		    <div class="col-sm-3" v-else-if="selected[index]=='music'">
+		      <div class="radio">
+				  <label><input type="radio" :name="index"  value="start" checked>打开</label>
+				  <label><input type="radio" :name="index" value="stop">关闭</label>
+			  </div>
+		    </div>
+		   <!--  <div class="col-sm-2" v-else-if="selected[index]=='air'">
+		      <select type="text" class="form-control" placeholder="请选择控制方式" v-model="air_selected">
+		      	<option value="null">请选择控制方式</option>
+		      	<option value="power">电源</option>
+		      	<option value="model">模式</option>
+		      	<option value="temp">温度</option>
+		      </select>
+		    </div> -->
+		    <div class="col-sm-6" v-else-if="selected[index]=='air'">
+		      <div class="col-sm-2">
+		      	电源：
+				  <label><input type="radio" :name="index"  value="open" checked>打开</label>
+				  <label><input type="radio" :name="index" value="close">关闭</label>
+			  </div>
+			  <div class="col-sm-2">
+			  	模式：
+				  <select type="text" class="form-control">
+			      	<option value="cold">制冷</option>
+			      	<option value="hot">制热</option>
+		      	  </select>
+			  </div>
+			  <div class="col-sm-2">
+			 	温度：
+				  <select type="text" class="form-control">
+			      	<option value="16">16</option>
+			      	<option value="17">17</option>
+			      	<option value="18">18</option>
+			      	<option value="19">19</option>
+			      	<option value="20">20</option>
+			      	<option value="21">16</option>
+			      	<option value="22">17</option>
+			      	<option value="23">18</option>
+			      	<option value="24">19</option>
+			      	<option value="25">25</option>
+			      	<option value="26">26</option>
+			      	<option value="27">27</option>
+			      	<option value="28">28</option>
+			      	<option value="29">29</option>
+			      	<option value="30">30</option>
+		      	  </select>
+			  </div>
+			 </div>
 		  </div> 
 		  <div class="form-group">
 		    <div class="col-sm-10 col-sm-offset-2">
@@ -100,7 +148,7 @@ export default {
         return {
         	devlist:'',//设备列表
         	show:false,
-        	selected:'null',
+        	selected:['null'],
             addisActive:false,
             contents:[1],
             lenArr: [5, 10, 20], // 每页显示长度设置
@@ -144,17 +192,21 @@ export default {
         },
         close(){
             this.addisActive=false;
-            console.log("2222");
+            this.selected=['null'];
+            this.contents=[1];
+            
         },
         //添加情景模式内容
         addContent(){
         	this.contents.push(0);
+        	this.selected.push('null');
         },
         delContent(){
         	this.contents.pop();
+        	this.selected.pop();
         },
         //选择控制类型
-        ctrlType(e){
+       ctrlType(e){
         	var that=this;
         	var ele=e.target;
         	var index = ele.selectedIndex; // 选中索引
@@ -163,24 +215,25 @@ export default {
 	        	$.post('/run/light/getLightList',{building_id:sessionStorage.buildID,room_id:this.room_id},function(data){
 	    					// that.devlist=data.lights;
 	    					// that.show=true;
-	    					console.log(ele.parentNode.parentNode);
+	    					console.log(ele.parentNode.nextSbiling);
 	    		})	
         	}
         	
         }
     },
     watch:{
-    	selected:function(){
-    		var that=this;
-    		switch(this.selected){
-    			case 'light':
-    				$.post('/run/light/getLightList',{building_id:sessionStorage.buildID,room_id:this.room_id},function(data){
-    					that.devlist=data.lights;
-    					that.show=true;
-    				})
-    		}
+    	// selected:function(){
+    	// 	console.log(this.selected);
+    	// 	var that=this;
+    	// 	switch(this.selected){
+    	// 		case 'light':
+    	// 			$.post('/run/light/getLightList',{building_id:sessionStorage.buildID,room_id:this.room_id},function(data){
+    	// 				that.devlist=data.lights;
+    	// 				that.show=true;
+    	// 			})
+    	// 	}
     		
-    	}
+    	// }
     }
 }
 </script>
@@ -263,7 +316,7 @@ export default {
     	padding-bottom: 50px;
     	/*overflow-y: auto;*/
     }
-    .ctrlType{
+    {
     	text-align: center;
     }
     .addInfo-add span{
