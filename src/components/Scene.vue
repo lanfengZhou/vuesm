@@ -6,9 +6,9 @@
     	<!-- <div class=""></div> -->
     	<form class="form-horizontal modelForm">
 		  <div class="form-group">
-		    <label for="senceNane" class="col-sm-2 control-label">情景名称</label>
+		    <label for="senceName" class="col-sm-2 control-label">情景名称</label>
 		    <div class="col-sm-4">
-		      <input type="text" class="form-control" id="senceNane" placeholder="情景名称">
+		      <input type="text" class="form-control" placeholder="情景名称" v-model="senceName">
 		    </div>
 		  </div>
 		  <div class="form-group">
@@ -24,7 +24,7 @@
 		  <div class="form-group" v-for="(item,index) in contents">
 		    <label class=" col-sm-2 control-label">内容{{index+1}}</label>
 		    <div class="col-sm-2">
-		      <select type="text" class="form-control" placeholder="请选择控制类型" v-model='selected[index]' @change="ctrlType($event)">
+		      <select type="text" class="form-control" v-model='selected[index]' @change="ctrlType($event,selected[index])">
 		      	<option value="null">请选择控制类型</option>
 		      	<option value="light">灯光</option>
 		      	<option value="curtain">窗帘</option>
@@ -33,37 +33,29 @@
 		      	<option value="air">空调</option>
 		      </select>
 		    </div>
-		   	<div class="col-sm-2">
-		      <select type="text" class="form-control " placeholder="请选择控制设备">
+		    <div class="col-sm-2" v-if="selected[index]!=='music'">
+		      <select type="text" class="form-control" v-model='dev_selected[index]' @change="ctrlDev($event)">
 		      	<option value="null">请选择控制设备</option>
-		      	<!-- <option v-for="(item,index1) in devlist" value="item.did">{{item.name}}</option> -->
+		      	<option v-for="item in devlist[selected[index]]" :value="item.did">{{item.name}}</option>
 		      </select>
 		    </div>
 		    <div class="col-sm-3" v-if="selected[index]=='light'||selected[index]=='curtain'||selected[index]=='plugbase'">
 		      <div class="radio">
-				  <label><input type="radio" :name="index"  value="on" checked>打开</label>
-				  <label><input type="radio" :name="index" value="off">关闭</label>
+				  <label><input type="radio" :name="index" value="on" v-model="picked[index]">打开</label>
+				  <label><input type="radio" :name="index" value="off" v-model="picked[index]">关闭</label>
 			  </div>
 		    </div>
 		    <div class="col-sm-3" v-else-if="selected[index]=='music'">
 		      <div class="radio">
-				  <label><input type="radio" :name="index"  value="start" checked>打开</label>
-				  <label><input type="radio" :name="index" value="stop">关闭</label>
+				  <label><input type="radio" :name="index" value="start" v-model="picked[index]">打开</label>
+				  <label><input type="radio" :name="index" value="stop" v-model="picked[index]">关闭</label>
 			  </div>
 		    </div>
-		   <!--  <div class="col-sm-2" v-else-if="selected[index]=='air'">
-		      <select type="text" class="form-control" placeholder="请选择控制方式" v-model="air_selected">
-		      	<option value="null">请选择控制方式</option>
-		      	<option value="power">电源</option>
-		      	<option value="model">模式</option>
-		      	<option value="temp">温度</option>
-		      </select>
-		    </div> -->
 		    <div class="col-sm-6" v-else-if="selected[index]=='air'">
 		      <div class="col-sm-2">
 		      	电源：
-				  <label><input type="radio" :name="index"  value="open" checked>打开</label>
-				  <label><input type="radio" :name="index" value="close">关闭</label>
+				  <label><input type="radio" :name="index" value="open" v-model="picked[index]">打开</label>
+				  <label><input type="radio" :name="index" value="close" v-model="picked[index]">关闭</label>
 			  </div>
 			  <div class="col-sm-2">
 			  	模式：
@@ -96,8 +88,8 @@
 		  </div> 
 		  <div class="form-group">
 		    <div class="col-sm-10 col-sm-offset-2">
-		      <button type="button" class="btn btn-primary col-sm-1">提交</button>
-		      <button type="button" class="btn btn-primary col-sm-1 col-sm-offset-3">取消</button>
+		      <button type="button" class="btn btn-primary col-sm-1" @click="submit">提交</button>
+		      <button type="button" class="btn btn-primary col-sm-1 col-sm-offset-3" @click="cancle">取消</button>
 		    </div>
 		  </div>
 		</form>
@@ -129,7 +121,7 @@
                             <button class="btn btn-default" @click="refresh">刷新</button>
                         </div>
                         <div class="pull-right">
-                            <boot-page :async="false" :data="lists" :lens="lenArr" :page-len="pageLen" :param="param" v-on:resData="getData"></boot-page>
+                            <boot-page :async="true" :data="lists" :lens="lenArr" :page-len="pageLen" :param="room_id" v-on:resData="getData"></boot-page>
                         </div>
                     </td>
                 </tr>
@@ -146,9 +138,13 @@ import Dheader from '../components/devices/Dheader'
 export default {
     data () {
         return {
-        	devlist:'',//设备列表
+        	senceName:'',
+        	devlist:{'light':'','curtain':'','plugbase':'','air':'','music':''},//设备列表
+        	devtype:'',
         	show:false,
-        	selected:['null'],
+        	selected:['null'],//类型
+        	dev_selected:['null'],//设备ID
+        	picked:[],//状态
             addisActive:false,
             contents:[1],
             lenArr: [5, 10, 20], // 每页显示长度设置
@@ -184,11 +180,11 @@ export default {
             this.$refs.page.refresh()
         },
         getData(datas){
-            console.log(datas);
+            // console.log(datas);
             this.tableList=datas;
         },
         add(){
-                this.addisActive=true;
+            this.addisActive=true;
         },
         close(){
             this.addisActive=false;
@@ -200,25 +196,79 @@ export default {
         addContent(){
         	this.contents.push(0);
         	this.selected.push('null');
+        	this.dev_selected.push('null');
         },
         delContent(){
         	this.contents.pop();
         	this.selected.pop();
+        	this.dev_selected.pop();
         },
         //选择控制类型
-       ctrlType(e){
+       ctrlType(e,type){
+       	// console.log(type);
         	var that=this;
-        	var ele=e.target;
-        	var index = ele.selectedIndex; // 选中索引
-        	var type = ele.options[index].value;
-        	if(type=='light'){
-	        	$.post('/run/light/getLightList',{building_id:sessionStorage.buildID,room_id:this.room_id},function(data){
-	    					// that.devlist=data.lights;
-	    					// that.show=true;
-	    					console.log(ele.parentNode.nextSbiling);
-	    		})	
+        	// var ele=e.target;
+        	// var index = ele.selectedIndex; // 选中索引
+        	// var type = ele.options[index].value;
+        	switch(type){
+        		case 'light':
+        			$.post('/run/light/getLightList',{building_id:sessionStorage.buildID,room_id:this.room_id},function(data){
+	    					that.devlist[type]=data.lights;
+	    					// that.devtype=type;
+	    					// console.log(that.devlist);
+	    			});
+	    			break;
+	    		case 'curtain':
+	    			$.post('/run/curtain/getCurtainList',{building_id:sessionStorage.buildID,room_id:this.room_id},function(data){
+	    					that.devlist[type]=data.curtains;
+	    			});
+	    			break;
+	    		case 'plugbase':
+	    			$.post('/run/envControl/getPlugList',{building_id:sessionStorage.buildID,room_id:this.room_id},function(data){
+	    					that.devlist[type]=data.plugbases;
+	    			});
+	    			break;
+	    		case 'music':
+	    			// $.post('/run/envControl/getPlugList',{building_id:sessionStorage.buildID,room_id:this.room_id},function(data){
+	    					that.devlist[type]='播放';
+	    					// that.devtype=type;
+	    					// console.log(that.devlist);
+	    			// });
+	    			break;
+	    		case 'air':
+	    			$.post('/run/envControl/getAirList',{building_id:sessionStorage.buildID,room_id:this.room_id},function(data){
+	    					that.devlist[type]=data.airConditioners;
+	    			});
+	    			break;
         	}
         	
+        },
+        ctrlDev(e){
+        	// console.log(this.dev_selected)
+        },
+        //提交表单
+        submit(){
+        	// console.log("111");
+        	var actions='';
+        	var that=this;
+        	this.selected.forEach(function(item,idx,arr){
+        		actions+=('{\"type\":\"'+item+'\",\"devID\":\"'+that.dev_selected[idx]+'\",\"tarState\":\"'+that.picked[idx]+'\"}');
+        	})
+        	$.post('/run/scene/add',{scene_name:this.senceName,actions:'['+actions+']',room_id:this.room_id},function(data){
+        		if(data.result=='ok'){
+        			that.cancle();
+        		}
+        		
+        	})
+        	// console.log(actions);
+        	// console.log(this.selected);
+        	// console.log(this.dev_selected);
+        	// console.log(this.picked);
+        },
+        cancle(){
+        	this.addisActive=false;
+            this.selected=['null'];
+            this.contents=[1];
         }
     },
     watch:{

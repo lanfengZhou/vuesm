@@ -52,7 +52,7 @@ export default {
         // 是否请求服务器端数据
         async: {
             type: Boolean,
-            default: false
+            default: true
         },
 
         // 每页显示个数
@@ -80,7 +80,7 @@ export default {
         // AJAX地址
         url: {
             type: String,
-            default: ''
+            default: '/run/scene/query'
         },
 
         // 显示页数
@@ -97,10 +97,11 @@ export default {
 
         // 参数内容
         param: {
-            type: Object,
-            default: function () {
-                return {}
-            }
+            type: Number,
+            default:''
+            // default: function () {
+            //     return {}
+            // }
         }
     },
     data () {
@@ -193,7 +194,6 @@ export default {
             this.pages = [];
 
             if (!this.async) {
-            	 console.log(this.data);
                 this.pageTotal = Math.ceil(this.data.length / this.len);
             }
 
@@ -210,7 +210,7 @@ export default {
 
         },
         resData(newData){
-        	console.log(newData);
+        	// console.log(newData);
         	this.$emit('resData',newData);
         },
         // 页码变化获取数据
@@ -225,26 +225,36 @@ export default {
                 }
                 this.resData(newData);
             } else {
-                this.param.active = this.pages[this.activeNum];
-                this.param.len = this.len;
-
-                this.$http({
-                    url: this.url, 
-                    method: 'POST',
-                    data: this.param
-                })
-                .then(function (response) {
-                    this.pageTotal = response.data.page_num
-
+                // this.param.active = this.pages[this.activeNum];
+                // this.param.len = this.len;
+                // console.log("1234");
+                $.post(this.url,{room_id:this.param},function(response){
+                	this.pageTotal = response.data.page_num
                     if (this.pages.length !== this.pageLen || this.pageTotal < this.pageLen) {
                         this.getPages()
                     }
-
                     if (!response.data.data.length) {
                         this.activeNum = this.pageTotal - 1
                     }
                     this.resData(response.data.data);
                 })
+                // this.$http({
+                //     url: this.url, 
+                //     method: 'POST',
+                //     data: this.param
+                // })
+                // .then(function (response) {
+                //     this.pageTotal = response.data.page_num
+
+                //     if (this.pages.length !== this.pageLen || this.pageTotal < this.pageLen) {
+                //         this.getPages()
+                //     }
+
+                //     if (!response.data.data.length) {
+                //         this.activeNum = this.pageTotal - 1
+                //     }
+                //     this.resData(response.data.data);
+                // })
             }
         },
 

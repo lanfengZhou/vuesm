@@ -32,16 +32,11 @@ export default {
 	},
 	created() {
 		var that=this;
-		$.get('config/building/query',function(data){
+		$.get('/config/building/query',function(data){
 			data.buildings.forEach(function(item,index,arr){
 				that.buildinglist.push(item);
 			})
 		})
-		// $.get('/user/getUserInfo',function(data){
-		// 	data.result.forEach(function(item,index,arr){
-		// 		that.buildinglist.push(item);
-		// 	})
-		// })
 	},
 	mounted() {
 		let canvas = document.getElementById('canvas'),
