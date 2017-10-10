@@ -6,13 +6,13 @@
     	<!-- <div class=""></div> -->
     	<form class="form-horizontal modelForm">
 		  <div class="form-group">
-		    <label for="senceName" class="col-sm-2 control-label">情景名称</label>
+		    <label for="senceName" class="col-sm-offset-2 col-sm-2 control-label">情景名称</label>
 		    <div class="col-sm-4">
 		      <input type="text" class="form-control" placeholder="情景名称" v-model="senceName">
 		    </div>
 		  </div>
 		  <div class="form-group">
-		  	<div class="col-sm-4 col-sm-offset-2">
+		  	<div class="col-sm-4 col-sm-offset-4">
 		  		<p>(以下请依次选择所要添加的控制类型，控制设备，控制状态)</p>
 		  	</div>
 		  	<div class="col-sm-4 addInfo-add">
@@ -22,7 +22,7 @@
 		  </div>
 		  <!-- 添加内容 -->
 		  <div class="form-group" v-for="(item,index) in contents">
-		    <label class=" col-sm-2 control-label">内容{{index+1}}</label>
+		    <label class="col-sm-offset-2 col-sm-2 control-label">内容{{index+1}}</label>
 		    <div class="col-sm-2">
 		      <select type="text" class="form-control" v-model='selected[index]' @change="ctrlType($event,selected[index])">
 		      	<option value="null">请选择控制类型</option>
@@ -51,7 +51,7 @@
 				  <label><input type="radio" :name="index" value="stop" v-model="picked[index]">关闭</label>
 			  </div>
 		    </div>
-		    <div class="col-sm-6" v-else-if="selected[index]=='air'">
+		    <div class="col-sm-offset-4 col-sm-6" v-else-if="selected[index]=='air'">
 		      <div class="col-sm-2">
 		      	电源：
 				  <label><input type="radio" :name="index" value="open" v-model="picked[index]">打开</label>
@@ -59,23 +59,23 @@
 			  </div>
 			  <div class="col-sm-2">
 			  	模式：
-				  <select type="text" class="form-control">
+				  <select type="text" class="form-control" v-model="model[index]">
 			      	<option value="cold">制冷</option>
 			      	<option value="hot">制热</option>
 		      	  </select>
 			  </div>
 			  <div class="col-sm-2">
 			 	温度：
-				  <select type="text" class="form-control">
+				  <select type="text" class="form-control" v-model="temp[index]">
 			      	<option value="16">16</option>
 			      	<option value="17">17</option>
 			      	<option value="18">18</option>
 			      	<option value="19">19</option>
 			      	<option value="20">20</option>
-			      	<option value="21">16</option>
-			      	<option value="22">17</option>
-			      	<option value="23">18</option>
-			      	<option value="24">19</option>
+			      	<option value="21">21</option>
+			      	<option value="22">22</option>
+			      	<option value="23">23</option>
+			      	<option value="24">24</option>
 			      	<option value="25">25</option>
 			      	<option value="26">26</option>
 			      	<option value="27">27</option>
@@ -87,9 +87,9 @@
 			 </div>
 		  </div> 
 		  <div class="form-group">
-		    <div class="col-sm-10 col-sm-offset-2">
+		    <div class="col-sm-10 col-sm-offset-4">
 		      <button type="button" class="btn btn-primary col-sm-1" @click="submit">提交</button>
-		      <button type="button" class="btn btn-primary col-sm-1 col-sm-offset-3" @click="cancle">取消</button>
+		      <button type="button" class="btn btn-primary col-sm-1 col-sm-offset-2" @click="cancle">取消</button>
 		    </div>
 		  </div>
 		</form>
@@ -121,7 +121,7 @@
                             <button class="btn btn-default" @click="refresh">刷新</button>
                         </div>
                         <div class="pull-right">
-                            <boot-page :async="true" :data="lists" :lens="lenArr" :page-len="pageLen" :param="room_id" v-on:resData="getData"></boot-page>
+                            <boot-page :async="false" :data="lists" :lens="lenArr" :page-len="pageLen" :param="room_id" v-on:resData="getData"></boot-page>
                         </div>
                     </td>
                 </tr>
@@ -145,6 +145,8 @@ export default {
         	selected:['null'],//类型
         	dev_selected:['null'],//设备ID
         	picked:[],//状态
+        	model:[],
+        	temp:[],
             addisActive:false,
             contents:[1],
             lenArr: [5, 10, 20], // 每页显示长度设置
@@ -252,18 +254,27 @@ export default {
         	var actions='';
         	var that=this;
         	this.selected.forEach(function(item,idx,arr){
-        		actions+=('{\"type\":\"'+item+'\",\"devID\":\"'+that.dev_selected[idx]+'\",\"tarState\":\"'+that.picked[idx]+'\"}');
-        	})
-        	$.post('/run/scene/add',{scene_name:this.senceName,actions:'['+actions+']',room_id:this.room_id},function(data){
+        		if(item=='air'){
+        			actions+='{\"type\":\"'+item+'\",\"devID\":\"'+that.dev_selected[idx]+'\",\"power\":\"'+that.picked[idx]+'\",\"model\":\"'+that.model[idx]+'\",\"temp\":\"'+that.temp[idx]+'\"},';
+        		}else{
+        			actions+='{\"type\":\"'+item+'\",\"devID\":\"'+that.dev_selected[idx]+'\",\"tarState\":\"'+that.picked[idx]+'\"},';
+        		}
+        		
+        	});
+        	if(this.selected.indexOf('null')!==-1){
+        		alert('请完成表单！！！');
+        	}else{
+        		$.post('/run/scene/add',{scene_name:this.senceName,actions:'['+actions+']',room_id:this.room_id},function(data){
         		if(data.result=='ok'){
         			that.cancle();
         		}
         		
-        	})
-        	// console.log(actions);
-        	// console.log(this.selected);
-        	// console.log(this.dev_selected);
-        	// console.log(this.picked);
+        	});
+        	}
+        	
+        	console.log(this.selected);
+        	console.log(this.dev_selected);
+        	console.log(this.picked);
         },
         cancle(){
         	this.addisActive=false;
@@ -362,12 +373,10 @@ export default {
     ::-webkit-scrollbar-thumb:active{background-color:#8e8e8e}
     ::-webkit-scrollbar-thumb:window-inactive{background-color:#8e8e8e}
     .modelForm{
+    	/*margin-left: 300px;*/
     	margin-top: 20px;
-    	padding-bottom: 50px;
+    	/*padding-bottom: 50px;*/
     	/*overflow-y: auto;*/
-    }
-    {
-    	text-align: center;
     }
     .addInfo-add span{
     	vertical-align: bottom;
